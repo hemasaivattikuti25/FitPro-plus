@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: fitfusion_db
+    environment:
+      POSTGRES_DB: fitfusion
+      POSTGRES_USER: fitfusion_user
+      POSTGRES_PASSWORD: fitfusion_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - fitfusion_network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: fitfusion_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - fitfusion_network
+
+  # Python FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fitfusion_backend
+    environment:
+      - DATABASE_URL=postgresql://fitfusion_user:fitfusion_password@postgres:5432/fitfusion
+      - REDIS_URL=redis://redis:6379
+      - SECRET_KEY=your-secret-key-change-in-production
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+      - ./uploads:/app/uploads
+    networks:
+      - fitfusion_network
+    restart: unless-stopped
+
+  # Flutter Web (optional)
+  frontend:
+    build:
+      context: ./mobile_app
+      dockerfile: Dockerfile.web
+    container_name: fitfusion_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - fitfusion_network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: fitfusion_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - fitfusion_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  fitfusion_network:
+    driver: bridge 
