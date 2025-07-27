@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitPro+ | Your Personal Fitness Hub</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: white;
+    }
+    .card:hover {
+      transform: translateY(-5px) scale(1.02);
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="font-sans">
+  <!-- Navbar -->
+  <header class="flex justify-between items-center p-6 bg-opacity-10 backdrop-blur-lg">
+    <h1 class="text-4xl font-extrabold text-indigo-400">FitPro+</h1>
+    <nav class="space-x-6">
+      <a href="#dashboard" class="hover:underline">Dashboard</a>
+      <a href="#workouts" class="hover:underline">Workouts</a>
+      <a href="#goal" class="hover:underline">Goals</a>
+      <a href="#meals" class="hover:underline">Meals</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="dashboard" class="p-20 text-center">
+    <h2 class="text-5xl font-bold mb-6">Level Up Your Fitness Journey</h2>
+    <p class="text-lg mb-6">Workout, track progress, and hit your goals with FitPro+.</p>
+    <button class="bg-indigo-600 px-6 py-3 rounded-lg text-white font-bold hover:bg-indigo-700">Get Started</button>
+  </section>
+
+  <!-- Workout Section -->
+  <section id="workouts" class="p-10 bg-gray-900">
+    <h2 class="text-4xl font-semibold mb-6 text-center">🏋️ Exercise Library</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="card bg-gray-800 p-6 rounded-xl shadow-xl">
+        <img src="https://via.placeholder.com/300x200?text=Push+Ups" alt="Push Ups" class="rounded mb-4">
+        <h3 class="text-2xl mb-2">Push Ups</h3>
+        <p>Targets chest, shoulders, and triceps. Do 3 sets of 12-15 reps.</p>
+      </div>
+      <div class="card bg-gray-800 p-6 rounded-xl shadow-xl">
+        <img src="https://via.placeholder.com/300x200?text=Squats" alt="Squats" class="rounded mb-4">
+        <h3 class="text-2xl mb-2">Squats</h3>
+        <p>Works legs and glutes. Recommended: 4 sets of 10 reps.</p>
+      </div>
+      <div class="card bg-gray-800 p-6 rounded-xl shadow-xl">
+        <img src="https://via.placeholder.com/300x200?text=Rows" alt="Rows" class="rounded mb-4">
+        <h3 class="text-2xl mb-2">Dumbbell Rows</h3>
+        <p>Back strengthening exercise. Do 3 sets of 8-12 reps.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Goal Calculator -->
+  <section id="goal" class="p-10">
+    <h2 class="text-4xl font-semibold mb-6 text-center">🎯 Track Your Goal</h2>
+    <form id="goalForm" class="space-y-4 max-w-lg mx-auto">
+      <input type="number" id="currentWeight" placeholder="Current Weight (kg)" class="p-3 w-full text-black rounded">
+      <input type="number" id="targetWeight" placeholder="Target Weight (kg)" class="p-3 w-full text-black rounded">
+      <button type="submit" class="bg-indigo-700 w-full py-3 rounded font-bold">Calculate Calories</button>
+    </form>
+    <p id="result" class="mt-6 text-center text-xl"></p>
+  </section>
+
+  <!-- Meal Plans -->
+  <section id="meals" class="p-10 bg-gray-900">
+    <h2 class="text-4xl font-semibold mb-6 text-center">🍽️ Custom Meal Plans</h2>
+    <p class="text-center mb-4">Get meal recommendations based on your goals!</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-gray-800 p-6 rounded-xl">
+        <h3 class="text-2xl mb-2">Weight Gain Plan</h3>
+        <ul class="list-disc pl-5">
+          <li>Breakfast: Oats + Peanut Butter + Banana</li>
+          <li>Lunch: Chicken Breast + Rice + Veggies</li>
+          <li>Dinner: Salmon + Quinoa + Spinach</li>
+        </ul>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-xl">
+        <h3 class="text-2xl mb-2">Weight Loss Plan</h3>
+        <ul class="list-disc pl-5">
+          <li>Breakfast: Greek Yogurt + Berries</li>
+          <li>Lunch: Grilled Chicken Salad</li>
+          <li>Dinner: Stir-fry Veggies + Tofu</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="text-center p-6 mt-10 bg-opacity-10 backdrop-blur-lg">
+    <p>&copy; 2024 FitPro+. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    gsap.from("header", { duration: 1, y: -50, opacity: 0 });
+    gsap.from("section", { duration: 1, y: 30, opacity: 0, stagger: 0.2 });
+
+    document.getElementById('goalForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const current = parseInt(document.getElementById('currentWeight').value);
+      const target = parseInt(document.getElementById('targetWeight').value);
+      const diff = Math.abs(target - current);
+      let calories = 0;
+
+      if (target > current) {
+        calories = 2500 + (diff * 100);
+        document.getElementById('result').innerText = `You need ~${calories} kcal/day to gain weight.`;
+      } else if (target < current) {
+        calories = 2000 - (diff * 80);
+        document.getElementById('result').innerText = `You need ~${calories} kcal/day to lose weight.`;
+      } else {
+        document.getElementById('result').innerText = `You're maintaining! Aim for ~2200 kcal/day.`;
+      }
+    });
+  </script>
+</body>
+
+</html>
